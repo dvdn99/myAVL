@@ -1,88 +1,73 @@
 package avltree;
 
 
-class AVLTree {
-	private BTNode root;
+class AVLTree extends BST {
+
+	//the root property is inherited
+
+	//constructor
 
 	public AVLTree() {
-		root = null;
+		this.root = null;
 	}
 
 	////////building an AVL Tree that balance itself
 	public void avlInsert(int data) {
 		//first we use bst insert function
-		BTNode temp = treeInsert(data);
-		
-		//now we check every node balance factor until root
-		int bfactor;
-		while(temp.parent != null) {
-			//check node balance factor and rotate if necessary
-			bfactor = temp.getBalanceFactor();
-			if(bfactor == 2) {
-				rightRotate(temp);
-			}else if(bfactor == -2) {
-				leftRotate(temp);
-			}
-			temp = temp.parent;
-		}
-	}	
+		Node temp = insert(data);
+
+		checkBalance(temp);
+
+		System.out.println(data + " added successfully!" );
+	}
 	///////////////////////////////////////
 
 
 	//////AVL delete function, tree balance itself
 	public void avlDelete(int data) {
 		//first we use bst delete function
-		BTNode temp = treeDelete(data);
-		
+		Node temp = treeDelete(data);
+
 		//if item wasn't found return
-		if(temp == null)
+		if (temp == null)
 			return;
-		
-		//now we check every node balance factor until root
-		int bfactor;
-		while(temp.parent != null) {
-			//check node balance factor and rotate if necessary
-			bfactor = temp.getBalanceFactor();
-			if(bfactor == 2) {
-				rightRotate(temp);
-			}else if(bfactor == -2) {
-				leftRotate(temp);
-			}
-			temp = temp.parent;
-		}
+
+		checkBalance(temp);
+
+		System.out.println(data + " deleted successfully!" );
 
 	}
 	/////////////////////////////
 
 
 	/////Binary Search Tree delete function
-	public BTNode treeDelete(int data) {
-		BTNode dnode = treeSearch(root,data);
-		if(dnode == null) {
-			System.out.println(data+" Wasn't Found on this AVL Tree");
+	public Node treeDelete(int data) {
+		Node dnode = treeSearch(root, data);
+		if (dnode == null) {
+			System.out.println("Node {" + data + "} Wasn't Found on this AVL Tree");
 			return dnode;
 		}
 
-		BTNode y;
-		if(dnode.left == null || dnode.right == null)
+		Node y;
+		if (dnode.getLeft() == null || dnode.getRight() == null)
 			y = dnode;
 		else y = treeSuccessor(dnode);
 
-		BTNode x;
-		if(y.left != null)
-			x = y.left;
-		else x = y.right;
+		Node x;
+		if (y.getLeft() != null)
+			x = y.getLeft();
+		else x = y.getRight();
 
-		if(x != null)
-			x.parent = y.parent;
+		if (x != null)
+			x.setParent(y.getParent());
 
-		if(y.parent == null)
+		if (y.getParent() == null)
 			root = x;
-		else if( y == y.parent.left)
-			y.parent.left = x;
-		else y.parent.right = x;
+		else if (y == y.getParent().getLeft())
+			y.getParent().setLeft(x);
+		else y.getParent().setRight(x);
 
-		if(y != dnode)
+		if (y != dnode)
 			dnode.setData(y.getData());
 
 		return y;
@@ -90,157 +75,65 @@ class AVLTree {
 	///////////////////
 
 	/////Binary Search Tree insert function
-	public BTNode treeInsert(int data) {
-		BTNode newNode = new BTNode(data);
-		BTNode y = null;
-		BTNode x = this.root;
-		while(x!=null) {
-			y=x;
-			if(newNode.getData()<x.getData())
-				x = x.left;
-			else x=x.right;
-		}
 
-		newNode.parent = y;
-
-		if (y==null) {
-			this.root = newNode;
-		}else if(newNode.getData()<y.getData())
-			y.left = newNode;
-		else y.right = newNode;
-
-		return newNode;
-	}
 	///////////////////////////////////////////
 
-	public BTNode getRoot() {
+	public Node getRoot() {
 		return root;
 	}
 
-	public void setRoot(BTNode node) {
-		root = node;
-	}
-	
 	// inOrder Print function
-	public void printInOrder(BTNode node){
-		if(node!=null) {
-			printInOrder(node.left);
-			System.out.print(node.getData()+" ");
-			System.out.println("Balance Factor: "+node.getBalanceFactor());
-			printInOrder(node.right);
-		}
-	}
+
 
 	//left rotate function
-	public void leftRotate(BTNode node) {
-		BTNode y = node.right;
-		node.right = y.left;
-		if(y.left != null) {
-			y.left.parent = node;
+	private void leftRotate(Node node) {
+		Node y = node.getRight();
+		node.setRight( y.getLeft());
+		if (y.getLeft() != null) {
+			y.getLeft().setParent(node);
 		}
-		y.parent = node.parent;
-		if(node.parent == null)
+		y.setParent(node.getParent());
+		if (node.getParent() == null)
 			root = y;
-		else if(node == node.parent.left)
-			node.parent.left = y;
-		else node.parent.right = y;
-		y.left = node;
-		node.parent = y;
+		else if (node == node.getParent().getLeft())
+			node.getParent().setLeft(y);
+		else node.getParent().setRight(y);
+		y.setLeft(node);
+		node.setParent(y);
 	}
 	///////
 
 	//right rotate function
-	public void rightRotate(BTNode node) {
-		BTNode y = node.left;
-		node.left = y.right;
-		if(y.right != null) {
-			y.right.parent = node;
+	private void rightRotate(Node node) {
+		Node y = node.getLeft();
+		node.setLeft(y.getRight());
+		if (y.getRight() != null) {
+			y.getRight().setParent(node);
 		}
-		y.parent = node.parent;
-		if(node.parent == null)
+		y.setParent(node.getParent());
+		if (node.getParent() == null)
 			root = y;
-		else if(node == node.parent.right)
-			node.parent.right = y;
-		else node.parent.left = y;
-		y.right = node;
-		node.parent = y;
+		else if (node == node.getParent().getRight())
+			node.getParent().setRight(y);
+		else node.getParent().setLeft(y);
+		y.setRight(node);
+		node.setParent(y);
 	}
 	//////////
 
-	//BST search
-	public BTNode treeSearch(BTNode node, int key) {
-		if(node == null || node.getData() == key)
-			return node;
-		if(key < node.getData())
-			return treeSearch(node.left,key);
-		else 
-			return treeSearch(node.right,key);
-	}
-	/////////////
-	///Tree minimum function
-	public BTNode treeMinimum(BTNode node) {
-		while(node.left != null)
-			node = node.left;
-		return node;
-	}
-	///////////////////
-	///BST successor function
-	public BTNode treeSuccessor(BTNode node) {
-		if(node.right != null)
-			return treeMinimum(node.right);
-		BTNode y = node.parent;
-		while(y != null && node == y.right) {
-			node = y;
-			y = y.parent;
+	private void checkBalance(Node node){
+		//now we check every node balance factor until root
+		int balanceFactor;
+		while (node.getParent() != null) {
+			//check node balance factor and rotate if necessary
+			balanceFactor = node.getBalanceFactor();
+			if (balanceFactor == 2) {
+				rightRotate(node);
+			} else if (balanceFactor == -2) {
+				leftRotate(node);
+			}
+			node = node.getParent();
 		}
-		return y;
 	}
-	///////////////////////////
+
 }
-
-
-///////////Binary Tree Node class////////////
-class BTNode{
-	private int data;
-	BTNode left;
-	BTNode right;
-	BTNode parent;
-
-
-	public BTNode(int data) {
-		this.data = data;
-		left = null;
-		right = null;
-		parent = null;
-	}
-
-	public int getData() {
-		return data;
-	}
-	public void setData(int d) {
-		data = d;
-	}
-	public int getBalanceFactor() {
-		if(left == null && right == null)
-			return 0;
-		else if(left == null && right != null)
-			return 0 - (right.height() + 1);
-		else if(left != null && right == null)
-			return left.height() + 1;
-		else
-			return left.height() - right.height();
-	}
-	public int height() {
-		int res = 0;
-		if(left != null) res = left.height() + 1;
-		if(right != null)
-			res = Math.max(res, right.height() + 1);
-		return res;
-	}
-
-	public String toString() {
-		String msg = data+" ";
-		return msg;
-	}
-}
-/////////////////////////////////////////////////////////

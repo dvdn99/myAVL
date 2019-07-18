@@ -1,37 +1,53 @@
+/*
+*  AVL Tree code
+*
+*  Author: David Novizky :)
+*
+*
+*
+* */
+
+
+
 package avltree;
 
 
 public class Main {
 
 	public static void main(String[] args) {
-		AVLTree t1 = new AVLTree();
+		AVLTree myTree = new AVLTree();
 
 		//test line
+		System.out.println("\nTesting AVL Tree \n");
 
-		t1.avlInsert(5);
-		t1.avlInsert(1);
-		t1.avlInsert(19);
-		t1.avlInsert(3);
-		t1.avlInsert(8);
-		t1.avlInsert(22);
-		t1.avlInsert(10);
+		myTree.avlInsert(5);
+		myTree.avlInsert(1);
+		myTree.avlInsert(19);
+		myTree.avlInsert(3);
+		myTree.avlInsert(8);
+		myTree.avlInsert(22);
+		myTree.avlInsert(10);
 		
 		//print avl tree in order
-		t1.printInOrder(t1.getRoot());
+		System.out.println("In Order Print: ");
+		myTree.printInOrder(myTree.getRoot());
 		
 		//searching node & printing overriding toString()
-		BTNode node = t1.treeSearch(t1.getRoot(), 22);
+		Node node = myTree.treeSearch(myTree.getRoot(), 22);
 		System.out.println();
-		System.out.println(node);
+		System.out.println(node + " Found!");
 		
 		//deleting some elements
-		t1.avlDelete(55);  //trying to delete a non-exist element
-		t1.avlDelete(8);
-		t1.avlDelete(1);
-		t1.avlDelete(19);
-		//t1.avlDelete(22);
-		//t1.avlDelete(10);
-		t1.printInOrder(t1.getRoot());
+		myTree.avlDelete(55);  //trying to delete a non-exist element
+		myTree.avlDelete(8);
+		myTree.avlDelete(1);
+		myTree.avlDelete(19);
+		//myTree.avlDelete(22);
+		//myTree.avlDelete(10);
+
+		//print avl tree in order
+		System.out.println("\nIn Order Print after some deletions: ");
+		myTree.printInOrder(myTree.getRoot());
 		
 	}
 
